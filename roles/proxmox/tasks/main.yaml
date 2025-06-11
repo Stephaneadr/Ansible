@@ -1,0 +1,2 @@
+- name: Create terraform user
+  import_tasks: ./terraform_user.yaml

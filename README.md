@@ -1,3 +1,3 @@
 # Ansible
 
-Run Playbook : ansible-playbook -i inventory.yaml proxmox.yaml --key-file ~/.ssh/ansible
+Run Playbook : ansible-playbook -i inventory.yaml playbooks.yaml --key-file ~/.ssh/ansible

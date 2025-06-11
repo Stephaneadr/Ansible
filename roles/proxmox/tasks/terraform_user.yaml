@@ -1,0 +1,38 @@
+- name: Create Terraform user
+  ansible.builtin.command: >
+    pveum user add terraform@pve
+  
+# - name: Show contents of /etc/pve/user.cfg
+#   ansible.builtin.command: cat /etc/pve/user.cfg
+#   register: user_cfg_contents
+
+# - name: Print /etc/pve/user.cfg
+#   ansible.builtin.debug:
+#     msg: "{{ user_cfg_contents.stdout }}"
+
+- name: Check if role Terraform exists
+  ansible.builtin.command: pveum role list
+  register: terraform_role_check
+  failed_when: false
+  changed_when: false
+
+- name: Print role_list
+  ansible.builtin.debug:
+    msg: "{{terraform_role_check.stdout}}"
+
+- name: Set fact if role Terraform exists
+  ansible.builtin.set_fact:
+    terraform_role_exists: "{{ 'Terraform' in terraform_role_check.stdout_lines }}"
+
+- name: Debug value of terraform_role_exists
+  ansible.builtin.debug:
+    msg: "Terraform role exists: {{ terraform_role_exists }}"
+
+# - name: Create Terraform role with specific privileges
+#   ansible.builtin.command: >
+#     pveum role add Terraform -privs "Datastore.Allocate Datastore.AllocateSpace Datastore.AllocateTemplate Datastore.Audit Pool.Allocate Sys.Audit Sys.Console Sys.Modify SDN.Use VM.Allocate VM.Audit VM.Clone VM.Config.CDROM VM.Config.Cloudinit VM.Config.CPU VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Migrate VM.Monitor VM.PowerMgmt User.Modify"
+#   when: not terraform_role_exists
+  
+- name: Assign Terraform role to terraform@pve user at root level
+  ansible.builtin.command: >
+    pveum aclmod / -user terraform@pve -role Terraform
